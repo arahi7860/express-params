@@ -1,104 +1,204 @@
 [![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
 
-# Talk Template
+# Express Parameters
 
-Use this template to structure your READMEs for talks. Remove text from this
-section, or use it to frame the talk you are giving. Good framing answers the
-question "Why am I learning this?".
+Now that we've discussed the basics of defining routes in Express, we need to
+talk about how to get data from the user, so we can do something with it.
 
-Be sure to include a recent [`LICENSE`](LICENSE) and Markdown linter
-configuration ([`.remarkrc`](.remarkrc)). Also, include an appropriate
-`.gitignore`; these are usually found in specific technology templates, for
-example [js-template](https://www.github.com/ga-wdi-boston/js-template).
+There are a lot of ways we'll collect data from our users:
+
+1. Forms
+1. POST requests
+1. Params
+
+We're going to focus on the last option. It's by far the most ubiquitous.
 
 ## Prerequisites
 
-- Topics with which developers should be familiar with.
-- Prerequisites are "just-in-time", so if I have a prerequisite that mentions
-  Sass, I would **not** need to include CSS as a prerequisite.
-- [Links to previous materials](https://www.github.com/ga-wdi-boston/example)
-  are often useful.
+- Node
+- Express
 
 ## Objectives
 
 By the end of this, developers should be able to:
 
-- Write objectives that focus on demonstrating knowledge.
-- Write learning objectives that begin with an
-  [imperative verb](https://en.wikipedia.org/wiki/Imperative_mood).
-- Avoid objectives that start with "Use" or "Understand".
-- Rewrite objecives that begin with "Use" by inverting sentence structure.
-- End each objective with a period.
-- Write objectives on the whiteboard so they can be referenced during a talk.
+- Explain what parameters are and how they work
+- Define a route that accepts a parameter using Express
 
-## Preparation
+## Introduction
 
-1. Fork and clone this repository.
-   [FAQ](https://github.com/ga-wdi-boston/meta/wiki/ForkAndClone)
-1. Create a new branch, `training`, for your work.
-1. Checkout to the `training` branch.
-1. Install dependencies with `npm install`.
+Let's start by going on a trip!
 
-Better preparation instructions may be found as
-[snippets](https://github.com/ga-wdi-boston/instructors/tree/master/snippets).
+Open up [Kayak.com](https://www.kayak.com/) and search for flights from
+Washington, DC to Hong Kong for this weekend. GA is paying! (Not really)
 
-It's a good idea to have students do these steps while you're writing objectives
-on the whiteboard.
+Take a look at the URL that gets generated when you search for flights. It
+should look something like this:
 
-## Leading Topic Heading
+```txt
+https://www.kayak.com/flights/WAS-HKG/2019-12-06/2019-12-13?sort=bestflight_a
+```
 
-Here is where the talk begins. If you have not already included framing above,
-it's appropriate to put it here. Link to introductory articles or documentation.
-Motivate the next section.
+This URL has a lot of parts to it. Hopefully some of this stuff is familiar. For
+example:
 
-Demos, exercises, and labs are labelled as such, followed by a colon and a
-description of the activity starting with an
-[imperative verb](https://en.wikipedia.org/wiki/Imperative_mood).
+- What is the `https://www.kayak.com` part?
+- What is the `/flights` part?
 
-## Demo: Write a Demo
+But what about the rest of the stuff in the URL?
 
-Demos are demonstrations, and developers should give their full attention to
-them. It's a great time for them to take notes about important concepts before
-applying them in an exercise.
+Well there are two things going on here:
 
-Demos correspond to the "I do" portion of scaffolding from consultant training.
+1. Parameters
+1. Query String
 
-## Code-Along: Write an Code-Along
+The query string is the section at the end of the url (`?sort=bestflight_a`).
+Query strings always start with a `?` and are followed by `key=value` pairs
+separarated by commas. They're one way of collecting data from users.
 
-During the code-along, developers should apply concepts covered in the previous
-demo, led by the consultant. This is their first chance to generalize concepts
-introduced. Exercises should be very focused, and flow natural into a lab.
+The remaining pieces of the URL are **parameters**.
 
-Exercises correspond to the "We do" portion of scaffolding from consultant
-training.
+### Parameters
 
-## Lab: Write a Lab
+The remaining pieces of the URL above are all parameters, including:
 
-During labs, developers get to demonstrate their understanding of concepts from
-demos and applied knowledge from exercises. Labs are an opportunity for
-developers to build confidence, and also serve as a diagnostic tool for
-consultants to evaluate developer understanding.
+- `WAS-HKG`
+- `2019-12-06`
+- `2019-12-13`
 
-Labs should be timed explicitly using a timer. When estimating the time it will
-take to complete a lab, it is better to overestimate. During labs, consultants
-should circle the room and interact with developers, noting patterns and
-prompting with hints on how to complete the lab. If developers end early, a
-consultant may stop the lab timer. If developers do not finish in time, a
-consultant may give more time at her discretion based on current talk pace, the
-current estimate for the talk, and the importance of completing the lab while
-consultant support is available.
+These values tell us:
 
-Labs correspond to the "You do" portion of scaffolding from consultant training.
+- The departure location (`WAS`)
+- The arrival location (`HKG`)
+- The departure date (`2019-12-06`)
+- The arrival date (`2019-12-13`)
+
+**This is the purpose of params: to get data from users through the URL.** Even
+if you didn't realize, you've used this approach a lot. For instance, when you
+visit your profile on any social media application (Facebook, Twitter, LinkedIn)
+and look at the URL, you'll notice a value that uniquely represents you. That
+value is a parameter.
+
+## Writing Routes with Params
+
+I'm going to create a directory in my sandbox to work through building this out.
+
+### Review: Setting up an Express App
+
+Let's walk through the process of setting up a simple Express app.
+
+- What modules do I need to install?
+- What files do I need?
+- What do I require (i.e. import) into those files?
+- How do I set up a basic server?
+- How do I run my server?
+
+### Routes with Params
+
+We've seen how to define routes already. For instance, if we wanted to define a
+route that sent back a json object, we'd do something like this:
+
+```js
+app.get("/", function(req, res) {
+  res.json({ hello: "world" });
+});
+```
+
+If we visit localhost:3000, we should see this json object.
+
+Could we upate this route so that it said hello to anyone who's name was passed
+in as a parameter? That would look like this:
+
+```js
+app.get("/:name", function(req, res) {
+  res.json({ hello: req.params.name });
+});
+```
+
+What's going on here?
+
+- `req` represents the incoming request and `res` represents the outgoing
+  response
+- `res.json` is what we use to send a JSON response
+- `req.params` is an object containing all params in the url
+- `req.params.name` will be the value in the url. So if we navigate to
+  localhost:3000/james, `req.params.name` will be the string `'james'`
+
+## How Params Work
+
+Params let us add placeholders in our route paths.
+
+What ever we name the param in the path will be the key in the `req.params`
+object. For example, if we have this path:
+
+```txt
+/dogs/:breed
+```
+
+Then we'd use the following inside our route definition:
+
+```js
+req.params.breed;
+```
+
+When we visit `localhost:3000/dogs/Westie`, then the value of `req.params.breed`
+will be `Westie`.
+
+## Using Params
+
+We can use params to get a lot of valuable information from users. Let's go back
+to that original Kayak URL (without the query string):
+
+```txt
+https://www.kayak.com/flights/WAS-HKG/2019-12-06/2019-12-13
+```
+
+We can build a route to handle these kinds of requests pretty easily. We'll
+start with a simple route definition:
+
+```js
+app.get('/flights', (req, res){
+    res.json({ flights: 'lets go!' })
+})
+```
+
+The first part of the URL after the resource (`/flights`) asks the user for the
+location they're traveling from to the location they're traveling to. So we can
+update our path to get that information:
+
+```js
+app.get('/flights/:from-:to', (req, res){
+    res.json({
+        flight: {
+            from: req.params.from,
+            to: req.params.to
+        }
+    })
+})
+```
+
+Next we need the arrival date and the departure date. We can add those params to
+our URL as well:
+
+```js
+app.get('/flights/:from-:to/:arrival/:departure', (req, res){
+    res.json({
+        flight: {
+            from: req.params.from,
+            to: req.params.to,
+            arrival: req.params.arrival,
+            departure: req.params.departure
+        }
+    })
+})
+```
+
+And there we have it! We'd most likely use this data from params in a query to
+our database. More on that later!
 
 ## Additional Resources
 
-- Any useful links should be included in the talk material where the link is
-  first referenced.
-- Additional links for further study or exploration are appropriate in this
-  section.
-- Links to important parts of documentation not covered during the talk, or
-  tools tangentially used but not part of the focus of the talk, are also
-  appropriate.
+- [Express Documentation on Route parameters](https://expressjs.com/en/guide/routing.html#route-parameters)
 
 ## [License](LICENSE)
 
