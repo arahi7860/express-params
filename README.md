@@ -79,7 +79,9 @@ visit your profile on any social media application (Facebook, Twitter, LinkedIn)
 and look at the URL, you'll notice a value that uniquely represents you. That
 value is a parameter.
 
-## Writing Routes with Params
+## I Do: Writing Routes with Params
+
+Follow along with [this repository](https://git.generalassemb.ly/dc-wdi-node-express/express-params-exercise).
 
 I'm going to create a directory in my sandbox to work through building this out.
 
