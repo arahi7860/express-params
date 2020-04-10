@@ -101,9 +101,10 @@ We've seen how to define routes already. For instance, if we wanted to define a
 route that sent back a json object, we'd do something like this:
 
 ```js
-app.get("/", function(req, res) {
-  res.json({ hello: "world" });
-});
+
+app.get('/', (req, res) => {
+    res.send({ hello: 'World' })
+})
 ```
 
 If we visit localhost:3000, we should see this json object.
@@ -112,9 +113,10 @@ Could we upate this route so that it said hello to anyone who's name was passed
 in as a parameter? That would look like this:
 
 ```js
-app.get("/:name", function(req, res) {
+
+app.get('/:name', (req, res)=> {
   res.json({ hello: req.params.name });
-});
+})
 ```
 
 What's going on here?
@@ -159,7 +161,7 @@ We can build a route to handle these kinds of requests pretty easily. We'll
 start with a simple route definition:
 
 ```js
-app.get('/flights', (req, res){
+app.get('/flights', (req, res) => {
     res.json({ flights: 'lets go!' })
 })
 ```
@@ -169,7 +171,7 @@ location they're traveling from to the location they're traveling to. So we can
 update our path to get that information:
 
 ```js
-app.get('/flights/:from-:to', (req, res){
+app.get('/flights/:from-:to', (req, res) => {
     res.json({
         flight: {
             from: req.params.from,
@@ -183,7 +185,7 @@ Next we need the arrival date and the departure date. We can add those params to
 our URL as well:
 
 ```js
-app.get('/flights/:from-:to/:arrival/:departure', (req, res){
+app.get('/flights/:from-:to/:arrival/:departure', (req, res) => {
     res.json({
         flight: {
             from: req.params.from,
