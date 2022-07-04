@@ -81,7 +81,7 @@ value is a parameter.
 
 ## I Do: Writing Routes with Params
 
-Follow along with [this repository](https://git.generalassemb.ly/sei-cosmic-binturongs/express-params-exercise).
+Follow along with [this repository](https://git.generalassemb.ly/sei-axolotls/express-params-exercise).
 
 I'm going to create a directory in my sandbox to work through building this out.
 
